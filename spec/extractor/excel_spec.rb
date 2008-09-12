@@ -6,13 +6,11 @@ require 'timeout'
 describe DeltaAttack::Extractor::Excel do
   include SpecHelper
   before do
-    @is = Java::JavaIo::ByteArrayInputStream.new(
-      File.read(sample_data("13TOKYO.xls")).to_java_bytes)
-
-    @xls = DeltaAttack::Extractor::Excel.new(@is)
+    content = File.read(sample_data("13TOKYO.xls"))
+    @xls = DeltaAttack::Extractor::Excel.new(content.to_java_bytes)
   end
 
-  it { @xls.input_stream.should_not be_nil }
+  it { @xls.bytes.should_not be_nil }
   it "data[0][0].should == 13101" do
     @xls.data[0][0][0].should == 13101
   end

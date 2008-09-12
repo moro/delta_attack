@@ -7,9 +7,9 @@ require 'benchmark'
 module DeltaAttack
   module Extractor
     class Excel
-      attr_accessor :input_stream
-      def initialize(input_stream)
-        @input_stream = input_stream
+      attr_accessor :bytes
+      def initialize(bytes)
+        @bytes = bytes
       end
 
       def data(ignore_cache=false)
@@ -20,12 +20,15 @@ module DeltaAttack
 
       private
       def extract_data
-        @input_stream.reset
-
-        book = HSSFWorkbook.new(@input_stream)
-        (0...book.number_of_sheets).map{|i|
-          extract_from_sheet(book.sheet_at(i))
-        }
+        input_stream = Java::JavaIo::ByteArrayInputStream.new(@bytes)
+        begin
+          book = HSSFWorkbook.new(input_stream)
+          return (0...book.number_of_sheets).map do |i|
+            extract_from_sheet(book.sheet_at(i)) 
+          end
+        ensure
+          input_stream.close
+        end
       end
 
       def extract_from_sheet(sheet)
