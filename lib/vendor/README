@@ -1,0 +1,8 @@
+Download POI from <http://poi.apache.org/> version =< 3.1
+
+and symlink here poi-current.jar
+
+example, 
+
+ $ ls -l lib/vendor/
+ lrwxr-xr-x  1 you  us   40 Sep 12 09:54 poi-current.jar -> poi-3.1-FINAL/poi-3.1-FINAL-20080629.jar
