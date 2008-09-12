@@ -3,6 +3,7 @@ require 'java'
 include_class 'org.apache.poi.hssf.usermodel.HSSFWorkbook'
 include_class 'org.apache.poi.hssf.usermodel.HSSFCell'
 
+require 'benchmark'
 module DeltaAttack
   module Extractor
     class Excel
@@ -12,15 +13,19 @@ module DeltaAttack
       end
 
       def data(ignore_cache=false)
-        return @data if !ignore_cache && @data
+        return @data if (!ignore_cache) && @data
 
         @data = extract_data
       end
 
       private
       def extract_data
+        @input_stream.reset
+
         book = HSSFWorkbook.new(@input_stream)
-        extract_from_sheet(book.sheet_at(0))
+        (0...book.number_of_sheets).map{|i|
+          extract_from_sheet(book.sheet_at(i))
+        }
       end
 
       def extract_from_sheet(sheet)
