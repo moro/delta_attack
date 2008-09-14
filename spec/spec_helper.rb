@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # vim:set fileencoding=utf-8 filetype=ruby
-# $KCODE = 'u'
+$KCODE = 'u'
 
 require 'rubygems'
 $:.unshift(File.expand_path("../lib", File.dirname(__FILE__)))
