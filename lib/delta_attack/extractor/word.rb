@@ -1,24 +1,14 @@
-require 'java'
+require 'delta_attack/extractor/base'
 
 include_class 'org.apache.poi.hwpf.HWPFDocument'
 
 module DeltaAttack
   module Extractor
-    class Word
-      attr_accessor :bytes
-      def initialize(bytes)
-        @bytes = bytes
-      end
-
-      def data(ignore_cache=false)
-        return @data if (!ignore_cache) && @data
-
-        @data = extract_data
-      end
+    class Word < Base
 
       private
       def extract_data
-        input_stream = Java::JavaIo::ByteArrayInputStream.new(@bytes)
+        input_stream = java_input_stream
         begin
           book = HWPFDocument.new(input_stream)
           range = book.range

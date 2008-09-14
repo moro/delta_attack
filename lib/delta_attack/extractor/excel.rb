@@ -1,26 +1,14 @@
-require 'java'
+require 'delta_attack/extractor/base'
 
 include_class 'org.apache.poi.hssf.usermodel.HSSFWorkbook'
 include_class 'org.apache.poi.hssf.usermodel.HSSFCell'
 
-require 'benchmark'
 module DeltaAttack
   module Extractor
-    class Excel
-      attr_accessor :bytes
-      def initialize(bytes)
-        @bytes = bytes
-      end
-
-      def data(ignore_cache=false)
-        return @data if (!ignore_cache) && @data
-
-        @data = extract_data
-      end
-
+    class Excel < Base
       private
       def extract_data
-        input_stream = Java::JavaIo::ByteArrayInputStream.new(@bytes)
+        input_stream = java_input_stream
         begin
           book = HSSFWorkbook.new(input_stream)
           return (0...book.number_of_sheets).map do |i|
