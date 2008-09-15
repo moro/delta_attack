@@ -1,3 +1,4 @@
+require 'java'
 
 module DeltaAttack
   module Extractor
