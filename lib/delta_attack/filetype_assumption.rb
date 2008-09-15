@@ -23,12 +23,16 @@ module DeltaAttack
     private
     def by_content_type
       case @content_type
+      when "application/msword" then :word
       when "application/vnd.ms-excel" then :excel
+      when "application/vnd.ms-powerpoint" then :power_point
       end
     end
     def by_extention
       case File.extname(@filename).downcase
+      when ".doc" then :word
       when ".xls" then :excel
+      when ".ppt" then :power_point
       end
     end
   end
