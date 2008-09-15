@@ -6,6 +6,12 @@ end
 
 module DeltaAttack
   class FiletypeAssumption
+    CONTENT_TYPES = {
+      "application/msword" => :word,
+      "application/vnd.ms-excel" => :excel,
+      "application/vnd.ms-powerpoint" => :power_point,
+    }.freeze
+
     def self.support_magic?
       defined? Mahoro
     end
@@ -20,14 +26,15 @@ module DeltaAttack
       by_content_type || by_extention || :unknown
     end
 
+    def content_type
+      CONTENT_TYPES.index(filetype)
+    end
+
     private
     def by_content_type
-      case @content_type
-      when "application/msword" then :word
-      when "application/vnd.ms-excel" then :excel
-      when "application/vnd.ms-powerpoint" then :power_point
-      end
+      CONTENT_TYPES[@content_type]
     end
+
     def by_extention
       case File.extname(@filename).downcase
       when ".doc" then :word
