@@ -1,0 +1,66 @@
+#!/usr/bin/env jruby
+# vim:set fileencoding=utf-8 filetype=ruby
+$KCODE = 'u'
+
+require "optparse"
+require "rbconfig"
+require "delta_attack"
+
+module DeltaAttack
+  class Server
+
+    DEFAULT_OPTION = {
+      :port => 3333,
+      :mount => "/extract",
+    }.freeze
+
+    def self.run(argv)
+      if RbConfig::CONFIG["arch"] =~ /java/i
+        new(argv.dup).run
+      else
+        exec(*["jruby", $0, argv])
+      end
+    end
+
+    def initialize(argv)
+      @argv = argv
+      @options = DEFAULT_OPTION.dup
+
+      @parser = OptionParser.new do |parser|
+        parser.banner = <<-EOB.gsub(/^\t+/, "")
+          Usage: #$0 [options]
+        EOB
+
+        parser.separator "Options:"
+        parser.on("-p", "--port=PORT", Integer, "specify port default: #{DEFAULT_OPTION[:port]}") do |v|
+          @options[:port] = v
+        end
+        parser.on("-m", "--mount=PATH", String, "mount path of extract servlet #{DEFAULT_OPTION[:mount].dump}") do |v|
+          @options[:mount] = v
+        end
+
+        parser.separator ""
+
+        parser.on("--version", "Show version string `#{VERSION}'") do
+          puts VERSION
+          exit
+        end
+      end
+    end
+
+    def run
+		  @parser.order!(@argv)
+      require 'webrick/httpserver'
+      require 'delta_attack/extractor'
+      require 'delta_attack/extractor/servlet'
+
+      @server = WEBrick::HTTPServer.new(:Port=>@options[:port])
+      @server.mount(@options[:mount], DeltaAttack::Extractor::Servlet)
+      trap("INT"){ @server.shutdown }
+      @server.start
+    end
+  end
+end
+
+DeltaAttack::Server.run(ARGV)
+

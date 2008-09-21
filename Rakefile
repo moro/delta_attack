@@ -7,6 +7,7 @@ require 'rake/gempackagetask'
 require 'rake/rdoctask'
 require 'rake/contrib/rubyforgepublisher'
 require 'rake/contrib/sshpublisher'
+require 'lib/delta_attack'
 require 'spec/rake/spectask'
 require 'fileutils'
 include FileUtils
@@ -14,11 +15,11 @@ include FileUtils
 NAME              = "delta_attack"
 AUTHOR            = "MOROHASHI Kyosuke"
 EMAIL             = "moronatural@gmail.com"
-DESCRIPTION       = "MS Office dump tool with POI"
-RUBYFORGE_PROJECT = "delta_attack"
-HOMEPATH          = "http://#{RUBYFORGE_PROJECT}.rubyforge.org"
-BIN_FILES         = %w( delta_attack )
-VERS              = "0.0.1"
+DESCRIPTION       = "extract text from MS Office document with Apache POI"
+# RUBYFORGE_PROJECT = "delta_attack"
+HOMEPATH          = "http://github.com/moro/delta_attack"
+BIN_FILES         = %w( delta_attack_server )
+VERS              = DeltaAttack::VERSION
 
 
 REV = File.read(".svn/entries")[/committed-rev="(d+)"/, 1] rescue nil
@@ -54,7 +55,7 @@ spec = Gem::Specification.new do |s|
 	s.email             = EMAIL
 	s.homepage          = HOMEPATH
 	s.executables       = BIN_FILES
-	s.rubyforge_project = RUBYFORGE_PROJECT
+#	s.rubyforge_project = RUBYFORGE_PROJECT
 	s.bindir            = "bin"
 	s.require_path      = "lib"
 	s.autorequire       = ""
@@ -63,10 +64,10 @@ spec = Gem::Specification.new do |s|
 	#s.add_dependency('activesupport', '>=1.3.1')
 	#s.required_ruby_version = '>= 1.8.2'
 
-	s.files = %w(README ChangeLog Rakefile) +
+	s.files = %w(README NOTICE ChangeLog Rakefile) +
 		Dir.glob("{bin,doc,spec,lib,templates,generator,extras,website,script}/**/*") + 
-		Dir.glob("ext/**/*.{h,c,rb}") +
-		Dir.glob("examples/**/*.rb") +
+		#Dir.glob("ext/**/*.{h,c,rb}") +
+		#Dir.glob("examples/**/*.rb") +
 		Dir.glob("tools/*.rb")
 
 	s.extensions = FileList["ext/**/extconf.rb"].to_a
@@ -75,6 +76,10 @@ end
 Rake::GemPackageTask.new(spec) do |p|
 	p.need_tar = true
 	p.gem_spec = spec
+end
+
+task :debug_gem do |p|
+  puts spec.to_ruby
 end
 
 task :install do
@@ -101,7 +106,7 @@ Rake::RDocTask.new do |rdoc|
 		rdoc.rdoc_files.include('ext/**/*.c')
 	end
 end
-
+=begin
 desc "Publish to RubyForge"
 task :rubyforge => [:rdoc, :package] do
 	require 'rubyforge'
@@ -132,3 +137,4 @@ task :release => [:clean, :package] do |t|
 	puts "Releasing #{NAME} v. #{VERS}"
 	rf.add_release RUBYFORGE_PROJECT, NAME, VERS, *files
 end
+=end
