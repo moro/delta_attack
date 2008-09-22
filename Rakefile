@@ -58,7 +58,6 @@ spec = Gem::Specification.new do |s|
 #	s.rubyforge_project = RUBYFORGE_PROJECT
 	s.bindir            = "bin"
 	s.require_path      = "lib"
-	s.autorequire       = ""
 	s.test_files        = Dir["spec/*_test.rb"]
 
 	#s.add_dependency('activesupport', '>=1.3.1')

@@ -1,11 +1,9 @@
-(in /Users/moro/tmp/delta_attack)
 Gem::Specification.new do |s|
   s.name = %q{delta_attack}
   s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["MOROHASHI Kyosuke"]
-  s.autorequire = %q{}
   s.date = %q{2008-09-22}
   s.default_executable = %q{delta_attack_server}
   s.description = %q{extract text from MS Office document with Apache POI}
