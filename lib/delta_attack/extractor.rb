@@ -5,12 +5,13 @@ require 'delta_attack/extractor/power_point'
 
 module DeltaAttack
   module Extractor
+    Error = Class.new(RuntimeError)
     def extract(content,type)
       extractor = case type
                   when :word then Word
                   when :excel then Excel
                   when :power_point then PowerPoint
-                  else return "not supported"
+                  else raise Error.new("not supported")
                   end
 
       extractor.new(content.to_java_bytes).data.flatten.join("\n")
