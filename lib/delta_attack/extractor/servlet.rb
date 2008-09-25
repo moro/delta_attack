@@ -22,8 +22,14 @@ module DeltaAttack
       def do_POST(req, res)
         f = req.query["file"]
         type = FiletypeAssumption.new(f.filename, f['content-type'])
-        res.body = Extractor.extract(f.to_s, type.filetype)
-        res.content_type = "text/plain"
+        begin
+          res.body = Extractor.extract(f.to_s, type.filetype)
+          res.content_type = "text/plain"
+        rescue Extractor::Error => exe
+          raise WEBrick::HTTPStatus::BadRequest, exe.message
+        rescue StandardError => stdex
+          raise WEBrick::HTTPStatus::InternalServerError, stdex.message
+        end
       end
     end
   end
