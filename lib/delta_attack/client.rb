@@ -6,10 +6,11 @@ require 'securerandom'
 module DeltaAttack
   class Client
     class << self
-      def cast(file, host="localhost", port=3333)
+      def cast(file, content_type = nil, host="localhost", port=3333)
         begin
-          req = new(file).request
-          res = Net::HTTP.start(host, port){|http| http.request(req) }
+          client = new(file)
+          client.content_type = content_type
+          res = Net::HTTP.start(host, port){|http| http.request(client.request) }
           raise "Request failed #{res}" unless res.is_a? Net::HTTPOK
           res.body
         rescue Errno::ECONNREFUSED => e
@@ -18,6 +19,8 @@ module DeltaAttack
       end
       alias extract cast
     end
+
+    attr_writer :content_type
 
     def initialize(filename, content=nil)
       @filename = filename
