@@ -6,9 +6,14 @@ require 'securerandom'
 module DeltaAttack
   class Client
     class << self
-      def cast(file, content_type = nil, host="localhost", port=3333)
+      def cast(filename, content_type = nil, host="localhost", port=3333)
+        cast_buf(nil, filename, content_type, host, port)
+      end
+      alias extract cast
+
+      def cast_buf(content, filename = "no-filename", content_type = nil, host="localhost", port=3333)
         begin
-          client = new(file)
+          client = new(filename, content)
           client.content_type = content_type
           res = Net::HTTP.start(host, port){|http| http.request(client.request) }
           raise "Request failed #{res}" unless res.is_a? Net::HTTPOK
@@ -17,7 +22,7 @@ module DeltaAttack
           raise "DeltaAttack Server is down on http://#{host}:#{port}"
         end
       end
-      alias extract cast
+      alias extract_buf cast_buf
     end
 
     attr_writer :content_type
@@ -28,7 +33,7 @@ module DeltaAttack
     end
 
     def boundary
-      @boundary ||= SecureRandom.hex(8)
+      @boundary ||= Digest::SHA1.hexdigest(File.read(__FILE__))[0,8]
     end
 
     def content
